@@ -1,10 +1,10 @@
 public class test {
-    public static void maind(STring args[])
+    public static void main(String[] args)
     {
-        String x= null;
-        if (x.isEmpmty())
+        String x = null;
+        if (x == null || x.isEmpty())
         {
-            System.out.println(vacio);
+            System.out.println("vacio");
         }
     }
 }
