@@ -10,11 +10,13 @@ This directory is its own Git repository (branch `main`, remote `origin` = https
 
 ## Structure
 
-- `src/Prueba.java` — the only real source file, module entry point (`public class Prueba`, `main` method).
-- `test.java` (repo root) — a scratch/example file with intentional typos (`STring`, `maind`, `isEmpmty`, undefined `vacio` variable) and will not compile as-is.
+- `src/Prueba.java` — the only real source file, module entry point (`public class Prueba`, `main` method). The null/empty logic lives in `static String describir(String)`.
+- `test/PruebaTest.java` — JUnit 5 tests for `Prueba.describir`.
+- `lib/` — `junit-platform-console-standalone` jar.
+- `test.java` (repo root) — a scratch/example file, outside the `src` source folder (so IntelliJ does not compile it).
 - `out/production/untitled/` — IntelliJ's compiled output directory.
 
-Both `Prueba.java` and `test.java` currently contain the same bug on purpose: they call `.isEmpty()` on a `null` String, which throws a `NullPointerException` at runtime.
+Both `Prueba.java` and `test.java` assign `null` to a String and guard it with `x == null || x.isEmpty()` before use, printing `vacio`.
 
 ## Common commands
 
@@ -25,4 +27,11 @@ javac -d out/production/untitled src/Prueba.java
 java -cp out/production/untitled Prueba
 ```
 
-There are no tests, linter, or build scripts configured in this project.
+Tests use JUnit 5 via the standalone console jar in `lib/` (no build tool). Test sources live in `test/` (registered as a test source folder in `untitled.iml`). Compile and run them (after compiling `src`):
+
+```
+javac -d out/test/untitled -cp "out/production/untitled;lib/junit-platform-console-standalone-1.11.4.jar" test/PruebaTest.java
+java -jar lib/junit-platform-console-standalone-1.11.4.jar execute -cp "out/production/untitled;out/test/untitled" --select-class PruebaTest
+```
+
+There is no linter or build script configured.
