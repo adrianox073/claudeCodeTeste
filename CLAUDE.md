@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Small Spring Boot 3.4 (Java 17, Maven) web app. It evaluates texts with `Prueba.describir` and stores each text plus its result in an in-memory H2 database via `JdbcTemplate`. The app stays running (Tomcat on port 8080), so the H2 database lives as long as the process and can be inspected through the H2 web console. The local Maven repository on this machine is `D:\code\repo` (not `~/.m2`); never hardcode jar paths.
 
-This directory is its own Git repository (branch `main`, remote `origin` = https://github.com/adrianox073/untitled.git). It sits physically inside a clone of `eugenp/tutorials` (`D:\Cursos\tutorials`) but is unrelated to it; run git commands from this directory.
+This directory is its own Git repository (branch `main`, remote `origin` = https://github.com/adrianox073/claudeCodeTeste.git). It sits physically inside a clone of `eugenp/tutorials` (`D:\Cursos\tutorials`) but is unrelated to it; run git commands from this directory.
 
 ## Structure
 
