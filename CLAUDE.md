@@ -4,24 +4,31 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project overview
 
-This is a minimal, single-module Maven Java project (artifact `untitled`, compiled for Java 11; IntelliJ module `untitled.iml` is Maven-managed). Dependencies: H2 (runtime persistence) and JUnit 5 (tests). The local Maven repository on this machine is `D:\code\repo` (not `~/.m2`), so never hardcode jar paths; ask Maven for the classpath.
+Small Spring Boot 3.4 (Java 17, Maven) web app. It evaluates texts with `Prueba.describir` and stores each text plus its result in an in-memory H2 database via `JdbcTemplate`. The app stays running (Tomcat on port 8080), so the H2 database lives as long as the process and can be inspected through the H2 web console. The local Maven repository on this machine is `D:\code\repo` (not `~/.m2`); never hardcode jar paths.
 
 This directory is its own Git repository (branch `main`, remote `origin` = https://github.com/adrianox073/untitled.git). It sits physically inside a clone of `eugenp/tutorials` (`D:\Cursos\tutorials`) but is unrelated to it; run git commands from this directory.
 
 ## Structure
 
-- `src/main/java/Prueba.java` — entry point. `static String describir(String)` returns `"vacio"` for null/empty input, otherwise the input. `main` evaluates sample texts, saves each one with its result to H2, and prints the stored rows.
-- `src/main/java/MensajeRepository.java` — plain JDBC repository over table `mensaje (id IDENTITY, texto, resultado, fecha)`; creates the table on construction, `guardar(texto, resultado)`, `listar()`. `URL_MEMORIA` = `jdbc:h2:mem:untitled;DB_CLOSE_DELAY=-1` (in-memory, lives for the JVM lifetime; data is lost when the program exits).
-- `src/main/java/Mensaje.java` — immutable row value (no records: Java 11 target).
-- `src/test/java/` — `PruebaTest` (describir) and `MensajeRepositoryTest` (each test uses its own random in-memory H2 DB).
+All code lives in package `com.example.untitled` (Spring Boot must not use the default package).
+
+- `UntitledApplication` — `@SpringBootApplication` entry point.
+- `Prueba` — `static String describir(String)`: `"vacio"` for null/empty input, otherwise the input.
+- `Mensaje` — immutable row value (id, texto, resultado, fecha); serialized to JSON via its getters.
+- `MensajeRepository` — `@Repository` over table `mensaje` using `JdbcTemplate`: `guardar(texto, resultado)`, `listar()`.
+- `MensajeController` — REST: `GET /mensajes` lists rows, `POST /mensajes?texto=...` evaluates and stores one.
+- `DatosDeEjemplo` — `CommandLineRunner` `@Component` that seeds `null`, `""`, `"hola"` on startup. Keep it a separate component (not a `@Bean` in the application class) so slice tests like `@JdbcTest` don't try to build it.
+- `src/main/resources/application.properties` — `spring.datasource.*` (`jdbc:h2:mem:untitled;DB_CLOSE_DELAY=-1`, user `sa`, empty password), `spring.sql.init.mode=always`, H2 console at `/h2-console`.
+- `src/main/resources/schema.sql` — creates table `mensaje`.
+- Tests: `PruebaTest` (plain unit), `MensajeRepositoryTest` (`@JdbcTest`, embedded DB, rollback per test), `UntitledApplicationTest` (`@SpringBootTest` + MockMvc against the API, includes seeded rows).
 
 ## Common commands
 
 ```
-mvn test                     # compile and run all tests
-mvn compile
-mvn -q dependency:build-classpath -Dmdep.includeScope=runtime -Dmdep.outputFile=target/cp.txt
-java -cp "target/classes;$(cat target/cp.txt)" Prueba    # Git Bash; ';' is the Windows separator
+mvn test               # run all tests
+mvn spring-boot:run    # start the app on http://localhost:8080
 ```
+
+H2 console: http://localhost:8080/h2-console with JDBC URL `jdbc:h2:mem:untitled`, user `sa`, empty password.
 
 There is no linter configured.

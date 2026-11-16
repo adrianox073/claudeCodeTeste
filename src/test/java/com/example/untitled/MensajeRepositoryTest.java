@@ -1,22 +1,23 @@
+package com.example.untitled;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
-import java.util.UUID;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.context.annotation.Import;
 
+/** BD H2 embebida con schema.sql; cada test se deshace al terminar (rollback). */
+@JdbcTest
+@Import(MensajeRepository.class)
 class MensajeRepositoryTest {
 
+    @Autowired
     private MensajeRepository repo;
-
-    @BeforeEach
-    void setUp() {
-        // BD en memoria distinta para cada test
-        repo = new MensajeRepository("jdbc:h2:mem:" + UUID.randomUUID() + ";DB_CLOSE_DELAY=-1");
-    }
 
     @Test
     void bdNuevaEmpiezaVacia() {
