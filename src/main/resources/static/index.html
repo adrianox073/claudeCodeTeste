@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Comentarios</title>
+    <style>
+        :root {
+            --bg: #f6f7f9; --card: #fff; --text: #1d2330; --muted: #6b7280;
+            --border: #e2e5ea; --accent: #2563eb; --accent-text: #fff; --error: #b91c1c;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #12151b; --card: #1b1f27; --text: #e6e8ec; --muted: #9aa1ad;
+                --border: #2c323d; --accent: #3b82f6; --accent-text: #fff; --error: #f87171;
+            }
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; background: var(--bg); color: var(--text);
+            font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        }
+        main { max-width: 760px; margin: 0 auto; padding: 32px 16px; }
+        h1 { margin: 0 0 4px; font-size: 1.6rem; }
+        p.sub { margin: 0 0 24px; color: var(--muted); }
+        .card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 10px; padding: 16px; margin-bottom: 24px;
+        }
+        form { display: flex; gap: 8px; }
+        input[type=text] {
+            flex: 1; min-width: 0; padding: 10px 12px; font: inherit; color: var(--text);
+            background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+        }
+        button {
+            padding: 10px 16px; font: inherit; font-weight: 600; cursor: pointer;
+            color: var(--accent-text); background: var(--accent); border: 0; border-radius: 8px;
+        }
+        button:disabled { opacity: .6; cursor: default; }
+        #error { color: var(--error); margin: 8px 0 0; min-height: 1.5em; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+        th { font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+        td.texto { word-break: break-word; }
+        td.num, td.fecha { white-space: nowrap; color: var(--muted); }
+        .nulo { color: var(--muted); font-style: italic; }
+        .vacio { color: var(--muted); }
+        @media (max-width: 520px) { td.fecha, th.fecha { display: none; } }
+    </style>
+</head>
+<body>
+<main>
+    <h1>Comentarios</h1>
+    <p class="sub">Cada comentario se evalúa con <code>describir</code> y se guarda en la tabla <code>mensaje</code> de H2.</p>
+
+    <div class="card">
+        <form id="form">
+            <input type="text" id="texto" name="texto" maxlength="1000"
+                   placeholder="Escribe un comentario…" autocomplete="off" autofocus>
+            <button type="submit" id="enviar">Agregar</button>
+        </form>
+        <p id="error" role="alert"></p>
+    </div>
+
+    <div class="card">
+        <table>
+            <thead>
+            <tr><th>#</th><th>Texto</th><th>Resultado</th><th class="fecha">Fecha</th></tr>
+            </thead>
+            <tbody id="filas"></tbody>
+        </table>
+    </div>
+</main>
+
+<script>
+    const form = document.getElementById('form');
+    const input = document.getElementById('texto');
+    const boton = document.getElementById('enviar');
+    const error = document.getElementById('error');
+    const filas = document.getElementById('filas');
+
+    function celda(contenido, clase) {
+        const td = document.createElement('td');
+        if (clase) td.className = clase;
+        td.textContent = contenido;
+        return td;
+    }
+
+    function celdaTexto(texto) {
+        if (texto === null) return celda('(null)', 'texto nulo');
+        if (texto === '') return celda('(vacío)', 'texto vacio');
+        return celda(texto, 'texto');
+    }
+
+    function pintar(mensajes) {
+        filas.replaceChildren(...mensajes.slice().reverse().map(m => {
+            const tr = document.createElement('tr');
+            tr.append(
+                celda(m.id, 'num'),
+                celdaTexto(m.texto),
+                celda(m.resultado),
+                celda(new Date(m.fecha).toLocaleString(), 'fecha'));
+            return tr;
+        }));
+    }
+
+    async function cargar() {
+        const res = await fetch('/mensajes');
+        if (!res.ok) throw new Error('No se pudo cargar la tabla (' + res.status + ')');
+        pintar(await res.json());
+    }
+
+    form.addEventListener('submit', async e => {
+        e.preventDefault();
+        error.textContent = '';
+        boton.disabled = true;
+        try {
+            const res = await fetch('/mensajes', {
+                method: 'POST',
+                body: new URLSearchParams({ texto: input.value })
+            });
+            if (!res.ok) throw new Error('No se pudo guardar (' + res.status + ')');
+            input.value = '';
+            await cargar();
+        } catch (err) {
+            error.textContent = err.message;
+        } finally {
+            boton.disabled = false;
+            input.focus();
+        }
+    });
+
+    cargar().catch(err => { error.textContent = err.message; });
+</script>
+</body>
+</html>

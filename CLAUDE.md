@@ -20,6 +20,7 @@ Code is organized by type under base package `com.example.untitled` (Spring Boot
 - `config.DatosDeEjemplo` — `CommandLineRunner` `@Component` that seeds `null`, `""`, `"hola"` on startup. Keep it a separate component (not a `@Bean` in the application class) so slice tests like `@JdbcTest` don't try to build it.
 - `src/main/resources/application.properties` — `spring.datasource.*` (`jdbc:h2:mem:untitled;DB_CLOSE_DELAY=-1`, user `sa`, empty password), `spring.sql.init.mode=always`, H2 console at `/h2-console`.
 - `src/main/resources/schema.sql` — creates table `mensaje`.
+- `src/main/resources/static/index.html` — comments page served at `/` (plain HTML + fetch, no template engine). Its form POSTs `texto` as form-urlencoded to `/mensajes` and re-renders the table from `GET /mensajes` (newest first). Renders values with `textContent` (no innerHTML) to avoid XSS.
 - Tests: `PruebaTest` (plain unit), `MensajeRepositoryTest` (`@JdbcTest`, embedded DB, rollback per test), `UntitledApplicationTest` (`@SpringBootTest` + MockMvc against the API, includes seeded rows).
 
 ## Common commands
