@@ -1,11 +1,11 @@
-package com.example.untitled;
+package com.example.untitled.util;
 
 public final class Prueba {
 
     private Prueba() {
     }
 
-    static String describir(String x) {
+    public static String describir(String x) {
         if (x == null || x.isEmpty()) {
             return "vacio";
         }

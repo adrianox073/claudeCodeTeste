@@ -1,4 +1,6 @@
-package com.example.untitled;
+package com.example.untitled.repository;
+
+import com.example.untitled.model.Mensaje;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;

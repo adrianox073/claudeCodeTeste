@@ -1,4 +1,8 @@
-package com.example.untitled;
+package com.example.untitled.controller;
+
+import com.example.untitled.model.Mensaje;
+import com.example.untitled.repository.MensajeRepository;
+import com.example.untitled.util.Prueba;
 
 import java.util.List;
 
