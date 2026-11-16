@@ -119,7 +119,10 @@
                 method: 'POST',
                 body: new URLSearchParams({ texto: input.value })
             });
-            if (!res.ok) throw new Error('No se pudo guardar (' + res.status + ')');
+            if (!res.ok) {
+                const cuerpo = await res.json().catch(() => ({}));
+                throw new Error(cuerpo.error || 'No se pudo guardar (' + res.status + ')');
+            }
             input.value = '';
             await cargar();
         } catch (err) {

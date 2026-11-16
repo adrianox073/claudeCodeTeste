@@ -1,12 +1,14 @@
 package com.example.untitled.controller;
 
+import com.example.untitled.exception.ComentarioDuplicadoException;
 import com.example.untitled.model.Mensaje;
-import com.example.untitled.repository.MensajeRepository;
-import com.example.untitled.util.Prueba;
+import com.example.untitled.service.MensajeService;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,21 +20,27 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/mensajes")
 public class MensajeController {
 
-    private final MensajeRepository repo;
+    private final MensajeService service;
 
-    public MensajeController(MensajeRepository repo) {
-        this.repo = repo;
+    public MensajeController(MensajeService service) {
+        this.service = service;
     }
 
     @GetMapping
     public List<Mensaje> listar() {
-        return repo.listar();
+        return service.listar();
     }
 
-    /** Evalua el texto con Prueba.describir y guarda el resultado. */
+    /** Evalua el texto y lo guarda; 409 si el comentario ya existe. */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Mensaje evaluar(@RequestParam(required = false) String texto) {
-        return repo.guardar(texto, Prueba.describir(texto));
+        return service.agregar(texto);
+    }
+
+    @ExceptionHandler(ComentarioDuplicadoException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public Map<String, String> duplicado(ComentarioDuplicadoException e) {
+        return Map.of("error", e.getMessage());
     }
 }

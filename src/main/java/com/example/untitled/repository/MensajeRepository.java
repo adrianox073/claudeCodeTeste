@@ -37,6 +37,19 @@ public class MensajeRepository {
         return new Mensaje(keys.getKey().longValue(), texto, resultado, fecha);
     }
 
+    /**
+     * Indica si ya hay un mensaje con ese texto, sin distinguir mayusculas
+     * ni espacios al principio o al final. Un texto null solo coincide con null.
+     */
+    public boolean existeTexto(String texto) {
+        Integer n = texto == null
+                ? jdbc.queryForObject("SELECT COUNT(*) FROM mensaje WHERE texto IS NULL", Integer.class)
+                : jdbc.queryForObject(
+                        "SELECT COUNT(*) FROM mensaje WHERE LOWER(TRIM(texto)) = LOWER(TRIM(?))",
+                        Integer.class, texto);
+        return n != null && n > 0;
+    }
+
     public List<Mensaje> listar() {
         return jdbc.query(
                 "SELECT id, texto, resultado, fecha FROM mensaje ORDER BY id",

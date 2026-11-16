@@ -54,8 +54,24 @@ class UntitledApplicationTest {
                 .andExpect(jsonPath("$.texto").value("adios"))
                 .andExpect(jsonPath("$.resultado").value("adios"));
 
+    }
+
+    @Test
+    void postDuplicadoDevuelve409() throws Exception {
+        mvc.perform(post("/mensajes").param("texto", "repetido"))
+                .andExpect(status().isCreated());
+
+        mvc.perform(post("/mensajes").param("texto", "  REPETIDO "))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.error").value("El comentario \"REPETIDO\" ya existe"));
+    }
+
+    @Test
+    void postDeUnDatoDeEjemploDevuelve409() throws Exception {
+        // "hola" y "" se guardan al arrancar (DatosDeEjemplo)
+        mvc.perform(post("/mensajes").param("texto", "hola"))
+                .andExpect(status().isConflict());
         mvc.perform(post("/mensajes").param("texto", ""))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.resultado").value("vacio"));
+                .andExpect(status().isConflict());
     }
 }

@@ -15,12 +15,14 @@ Code is organized by type under base package `com.example.untitled` (Spring Boot
 - `UntitledApplication` (root) — `@SpringBootApplication` entry point.
 - `util.Prueba` — `public static String describir(String)`: `"vacio"` for null/empty input, otherwise the input.
 - `model.Mensaje` — immutable row value (id, texto, resultado, fecha); serialized to JSON via its getters.
-- `repository.MensajeRepository` — `@Repository` over table `mensaje` using `JdbcTemplate`: `guardar(texto, resultado)`, `listar()`.
-- `controller.MensajeController` — REST: `GET /mensajes` lists rows, `POST /mensajes?texto=...` evaluates and stores one.
+- `repository.MensajeRepository` — `@Repository` over table `mensaje` using `JdbcTemplate`: `guardar(texto, resultado)`, `listar()`, `existeTexto(texto)` (case-insensitive, trimmed; `null` only matches `null`).
+- `service.MensajeService` — business logic: `agregar(texto)` rejects duplicates (via `existeTexto`) with `ComentarioDuplicadoException`, otherwise evaluates with `describir` and saves. The duplicate check is application-level only (no DB unique constraint), so concurrent identical POSTs could still both pass.
+- `exception.ComentarioDuplicadoException` — runtime exception carrying the user-facing message.
+- `controller.MensajeController` — REST over the service: `GET /mensajes` lists rows, `POST /mensajes?texto=...` returns 201 with the saved row, or 409 `{"error": "..."}` for a duplicate.
 - `config.DatosDeEjemplo` — `CommandLineRunner` `@Component` that seeds `null`, `""`, `"hola"` on startup. Keep it a separate component (not a `@Bean` in the application class) so slice tests like `@JdbcTest` don't try to build it.
 - `src/main/resources/application.properties` — `spring.datasource.*` (`jdbc:h2:mem:untitled;DB_CLOSE_DELAY=-1`, user `sa`, empty password), `spring.sql.init.mode=always`, H2 console at `/h2-console`.
 - `src/main/resources/schema.sql` — creates table `mensaje`.
-- `src/main/resources/static/index.html` — comments page served at `/` (plain HTML + fetch, no template engine). Its form POSTs `texto` as form-urlencoded to `/mensajes` and re-renders the table from `GET /mensajes` (newest first). Renders values with `textContent` (no innerHTML) to avoid XSS.
+- `src/main/resources/static/index.html` — comments page served at `/` (plain HTML + fetch, no template engine). Its form POSTs `texto` as form-urlencoded to `/mensajes` and re-renders the table from `GET /mensajes` (newest first); on error it shows the API's `error` message. Renders values with `textContent` (no innerHTML) to avoid XSS.
 - Tests: `PruebaTest` (plain unit), `MensajeRepositoryTest` (`@JdbcTest`, embedded DB, rollback per test), `UntitledApplicationTest` (`@SpringBootTest` + MockMvc against the API, includes seeded rows).
 
 ## Common commands

@@ -3,6 +3,7 @@ package com.example.untitled.repository;
 import com.example.untitled.model.Mensaje;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -48,6 +49,26 @@ class MensajeRepositoryTest {
         assertEquals("", mensajes.get(1).getTexto());
         assertEquals("vacio", mensajes.get(1).getResultado());
         assertEquals("b", mensajes.get(2).getTexto());
+    }
+
+    @Test
+    void existeTextoIgnoraMayusculasYEspacios() {
+        repo.guardar("Hola Mundo", "Hola Mundo");
+
+        assertTrue(repo.existeTexto("Hola Mundo"));
+        assertTrue(repo.existeTexto("  hola mundo "));
+        assertFalse(repo.existeTexto("hola"));
+    }
+
+    @Test
+    void existeTextoNullSoloCoincideConNull() {
+        assertFalse(repo.existeTexto(null));
+
+        repo.guardar("", "vacio");
+        assertFalse(repo.existeTexto(null));
+
+        repo.guardar(null, "vacio");
+        assertTrue(repo.existeTexto(null));
     }
 
     @Test
