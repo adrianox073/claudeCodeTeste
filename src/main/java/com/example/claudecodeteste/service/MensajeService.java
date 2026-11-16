@@ -1,9 +1,9 @@
-package com.example.untitled.service;
+package com.example.claudecodeteste.service;
 
-import com.example.untitled.exception.ComentarioDuplicadoException;
-import com.example.untitled.model.Mensaje;
-import com.example.untitled.repository.MensajeRepository;
-import com.example.untitled.util.Prueba;
+import com.example.claudecodeteste.exception.ComentarioDuplicadoException;
+import com.example.claudecodeteste.model.Mensaje;
+import com.example.claudecodeteste.repository.MensajeRepository;
+import com.example.claudecodeteste.util.Prueba;
 
 import java.util.List;
 

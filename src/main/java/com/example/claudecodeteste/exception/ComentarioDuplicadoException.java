@@ -1,4 +1,4 @@
-package com.example.untitled.exception;
+package com.example.claudecodeteste.exception;
 
 /** Se lanza al intentar guardar un comentario que ya existe en la BD. */
 public class ComentarioDuplicadoException extends RuntimeException {

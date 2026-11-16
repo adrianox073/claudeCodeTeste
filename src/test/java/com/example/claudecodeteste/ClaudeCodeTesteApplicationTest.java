@@ -1,4 +1,4 @@
-package com.example.untitled;
+package com.example.claudecodeteste;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 /** Levanta el contexto completo (DatosDeEjemplo incluido) y prueba la API. */
 @SpringBootTest
 @AutoConfigureMockMvc
-class UntitledApplicationTest {
+class ClaudeCodeTesteApplicationTest {
 
     @Autowired
     private MockMvc mvc;

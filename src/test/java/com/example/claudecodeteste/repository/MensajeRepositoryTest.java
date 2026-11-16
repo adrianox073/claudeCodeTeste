@@ -1,6 +1,6 @@
-package com.example.untitled.repository;
+package com.example.claudecodeteste.repository;
 
-import com.example.untitled.model.Mensaje;
+import com.example.claudecodeteste.model.Mensaje;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

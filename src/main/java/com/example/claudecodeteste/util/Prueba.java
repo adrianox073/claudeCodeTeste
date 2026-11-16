@@ -1,4 +1,4 @@
-package com.example.untitled.util;
+package com.example.claudecodeteste.util;
 
 public final class Prueba {
 

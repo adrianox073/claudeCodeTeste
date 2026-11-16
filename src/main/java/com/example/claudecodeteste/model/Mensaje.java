@@ -1,4 +1,4 @@
-package com.example.untitled.model;
+package com.example.claudecodeteste.model;
 
 import java.time.LocalDateTime;
 

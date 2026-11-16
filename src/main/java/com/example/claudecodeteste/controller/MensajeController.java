@@ -1,8 +1,8 @@
-package com.example.untitled.controller;
+package com.example.claudecodeteste.controller;
 
-import com.example.untitled.exception.ComentarioDuplicadoException;
-import com.example.untitled.model.Mensaje;
-import com.example.untitled.service.MensajeService;
+import com.example.claudecodeteste.exception.ComentarioDuplicadoException;
+import com.example.claudecodeteste.model.Mensaje;
+import com.example.claudecodeteste.service.MensajeService;
 
 import java.util.List;
 import java.util.Map;

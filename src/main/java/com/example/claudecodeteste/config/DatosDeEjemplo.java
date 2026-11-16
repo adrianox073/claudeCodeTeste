@@ -1,7 +1,7 @@
-package com.example.untitled.config;
+package com.example.claudecodeteste.config;
 
-import com.example.untitled.repository.MensajeRepository;
-import com.example.untitled.util.Prueba;
+import com.example.claudecodeteste.repository.MensajeRepository;
+import com.example.claudecodeteste.util.Prueba;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
